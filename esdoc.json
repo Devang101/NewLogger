@@ -1,0 +1,10 @@
+{
+  "source": "./src",
+  "destination": "./out/esdoc",
+  "includes": ["\\.(js|es6)$"],
+  "access": ["public", "protected"],
+  "builtinExternal": true,
+  "package": "./package.json",
+  "coverage": true,
+  "includeSource": true
+}

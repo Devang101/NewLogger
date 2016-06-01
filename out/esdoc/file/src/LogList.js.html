@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/LogList.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  </ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/LogList.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import React from &apos;react&apos;;
+var ReactDOM = require(&apos;react-dom&apos;);
+import {createStore} from &apos;redux&apos;;
+import { connect } from &apos;react-redux&apos;;
+import { Provider } from &apos;react-redux&apos;;
+
+/**
+ * LogReducer is a function that takes a state and an action and returns a new state
+ * @param {Object[], Object}
+ * @return {Object[]}
+ **/
+var LogReducer = function (state = [], action) {
+    console.log(&quot; &quot;);
+    console.log(action.type,&apos;called with state&apos;, state, &apos;and action&apos;, action);
+
+    switch (action.type) {
+        case &apos;ADD_LOG&apos;:
+            return [
+                ...state,
+                action.object
+            ]
+        case &apos;REMOVE_LOG&apos;:
+            return action.newState;
+
+        default:
+            return state;
+    }
+};
+
+/**
+ * store_0 is a redux store
+ **/
+var store_0 = createStore(LogReducer);
+
+/**
+ * createAddLogAction is a function that creates an ADD_LOG action
+ * @param {Object}
+ * @return {Object}
+ **/
+var createAddLogAction = function (log_entry) {
+    return {
+        type: &apos;ADD_LOG&apos;,
+        object: log_entry
+    };
+};
+
+/**
+ * createRemoveLogAction is a function that creates an REMOVE_LOG action
+ * @param {id}
+ * @return {Object}
+ **/
+var createRemoveLogAction = function (id) {
+    var index =0;
+    var newLog = store_0.getState().slice();
+    for(var i=0; i&lt;newLog.length; i++) //find index of log_entry with input id
+    {
+      if(newLog[i].id == id)
+      {
+        index=i;
+        break;
+      }
+    }
+    newLog.splice(index, 1); //remoce object from log
+    return {
+        type: &apos;REMOVE_LOG&apos;,
+        newState: newLog,
+    };
+};
+
+/**
+ * dispatchAdd dispatches the createAddLogAction
+ * @param {Object}
+ **/
+var dispatchAdd = function (log_entry)
+{
+  store_0.dispatch(createAddLogAction(log_entry));
+};
+
+/**
+ * dispatchRemove dispatches the createRemoveLogAction
+ * @param {Object}
+ **/
+var dispatchRemove = function (id)
+{
+  store_0.dispatch(createRemoveLogAction(id));
+};
+
+/**
+ * LogList is a React Component used to view the redux store_0
+ **/
+var LogList = React.createClass({
+
+  /**
+   * render is a function that renders JSX
+   * @return {JSX}
+   **/
+  render: function() {
+    var LogNodes = store_0.getState().map(function(Log) {
+      return (
+        &lt;div id={Log.id} key={Log.id}&gt;
+          Timestamp={Log.Timestamp}&lt;br/&gt;
+          EventType={Log.EventType}&lt;br/&gt;
+          EventSeverity={Log.EventSeverity}&lt;br/&gt;
+          Message={Log.Message}&lt;br/&gt;
+          id={Log.id}&lt;br/&gt;
+        &lt;/div&gt;
+      );
+    });
+    return (
+      &lt;div className=&quot;LogList&quot;&gt;
+        {LogNodes}
+      &lt;/div&gt;
+    );
+  }
+});
+
+/**
+ * connect is a function that connects the redux store_0 to the LogList react viewer
+ **/
+LogList = connect(
+  function mapStateToProps(state) {
+    return { log_entries: state };
+  },
+  function mapDispatchToProps(dispatch) {
+    return {
+    addLog: log_entry =&gt; dispatchAdd(log_entry),
+    removeLog: id =&gt; dispatchRemove(id)
+  };
+  }
+)(LogList);
+
+// var LogForm = React.createClass({
+//   getInitialState: function() {
+//     return {Timestamp: &apos;&apos;, EventType: &apos;&apos;, EventSeverity: &apos;&apos;, Message: &apos;&apos;};
+//   },
+//   handleTimestampChange: function(e) {
+//     var today = new Date();
+//     this.setState({Timestamp: (today.toString)});
+//   },
+//   handleEventTypeChange: function(e) {
+//     this.setState({EventType: e.target.value});
+//   },
+//   handleEventSeverityChange: function(e) {
+//     this.setState({EventSeverity: e.target.value});
+//   },
+//   handleMessageChange: function(e) {
+//     this.setState({Message: e.target.value});
+//   },
+//   handleSubmit: function(e) {
+//     e.preventDefault();
+//     var today = new Date();
+//     var Timestamp = today.toString();
+//     var EventType = this.state.EventType.trim();
+//     var EventSeverity = this.state.EventSeverity.trim();
+//     var Message = this.state.Message.trim();
+//     if (!Timestamp || !EventType || !EventSeverity || !Message) {
+//       return;
+//     }
+//     var Log = ({Timestamp: Timestamp, EventType: EventType, EventSeverity: EventSeverity, Message:Message});
+//     Log.id = Date.now();
+//     dispatchAdd(Log);
+//     this.setState({Timestamp: &apos;&apos;, EventType: &apos;&apos;, EventSeverity: &apos;&apos;, Message: &apos;&apos;});
+//   },
+//   render: function() {
+//     return (
+//       &lt;form className=&apos;LogForm&apos; onSubmit={this.handleSubmit}&gt;
+//         &lt;input type=&apos;text&apos; placeholder=&quot;EventType&quot; value ={this.state.EventType} onChange={this.handleEventTypeChange}/&gt;
+//         &lt;input type=&apos;text&apos; placeholder=&quot;EventSeverity&quot; value ={this.state.EventSeverity} onChange={this.handleEventSeverityChange}/&gt;
+//         &lt;input type=&apos;text&apos; placeholder=&quot;Message&quot; value ={this.state.Message} onChange={this.handleMessageChange}/&gt;
+//         &lt;input type=&quot;submit&quot; value=&quot;Post&quot;/&gt;
+//       &lt;/form&gt;
+//     );
+//   }
+// });
+
+// var LogRemoveForm = React.createClass({
+//   getInitialState: function(){
+//     return {id: &apos;&apos;};
+//   },
+//   handleIDchange: function(e){
+//     this.setState({id : e.target.value});
+//   },
+//   handleSubmit: function(e){
+//     e.preventDefault();
+//     var id = this.state.id.trim();
+//     if (!id)
+//     {
+//       return;
+//     }
+//     dispatchRemove(id) //set state to newLogs
+//     this.setState({id: &apos;&apos;});
+//   },
+//   render: function(){
+//     return(
+//       &lt;form className=&apos;Remove&apos; onSubmit={this.handleSubmit}&gt;
+//         &lt;input type=&apos;text&apos; placeholder=&quot;Log id&quot; value ={this.state.id} onChange={this.handleIDchange}/&gt;
+//         &lt;input type=&quot;submit&quot; value=&quot;Remove&quot;/&gt;
+//       &lt;/form&gt;
+//     )
+//   }
+// });
+
+// add under &lt;LogList&gt; and uncomment forms to use forms:
+// &lt;LogForm/&gt;
+// &lt;LogRemoveForm/&gt;
+
+/**
+* Renders to HTML
+**/
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.7)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

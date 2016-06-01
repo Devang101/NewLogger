@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <title>Immutable Todo</title>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script src="./src/bundle.js"></script>
+    <script>
+    ReactDOM.render(
+      <div>
+        <h1> Logs </h1>
+        <LogList store={store_0} />
+      </div>,
+      document.getElementById('content')
+    );
+
+    dispatchAdd(
+      {
+        EventType: "Kobe",
+        EventSeverity: "Lakers",
+        Timestamp: "Today",
+        Message: "I get buckets",
+        id: 1
+      }
+    );
+
+    dispatchAdd(
+      {
+        EventType: "Kobe",
+        EventSeverity: "Lakers",
+        Timestamp: "Today",
+        Message: "I get buckets",
+        id: 2
+      }
+    );
+
+    dispatchRemove(1);
+</script>
+
+  </body>
+</html>
